@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,8 +15,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('reboot', function() {
+    Artisan::call('storage:link');
+    Artisan::call('cache:clear');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    Artisan::call('config:cache');
+    return '<center><h1>System Rebooted!</h1></center>';
+});
+
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route("login");
 });
 
 Route::middleware([
