@@ -446,6 +446,7 @@ class AdminController extends Controller
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <a href="'.route('settings.event-destroy',$event->id).'"><button type="button" class="btn btn-danger" data-bs-dismiss="modal">Delete</button></a>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
@@ -490,6 +491,21 @@ class AdminController extends Controller
             $event->save();
             DB::commit();
             return $this->backWithSuccess('Event saved successfully');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->backWithError($th->getMessage());
+        }
+    }
+
+    public function destroyEvent(Event $event) {
+        DB::beginTransaction();
+        try {
+            if (file_exists(public_path($event->img))){
+                unlink(public_path($event->img));
+            }
+            $event->delete();
+            DB::commit();
+            return $this->backWithSuccess('Event deleted successfully');
         } catch (\Throwable $th) {
             DB::rollBack();
             return $this->backWithError($th->getMessage());
